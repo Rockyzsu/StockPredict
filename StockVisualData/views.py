@@ -29,16 +29,23 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.externals import joblib
 import os
 import pprint
+
 positiveWord = ['向上', '上涨', '涨', '涨停', '高涨', '底', '底部', '反击', '拉升', '加仓', '买入', '买', '看多', '多', '满仓', '杀入', '抄底', '绝地',
-                '反弹', '反转', '突破', '牛', '牛市', '利好', '盈利', '新高', '反弹', '增', '爆发', '升', '笑', '胜利', '逆袭', '热', '惊喜', '回暖', '回调', '强']
-negativeWord = ['向下', '下跌', '跌', '跌停', '低迷', '顶', '顶部', '空袭', '跳水', '减仓', '减持', '卖出', '卖', '空', '清仓', '暴跌', '亏', '阴跌', '拖累', '利空',
-                '考验', '新低', '跌破', '熊', '熊市', '套', '回撤', '垃圾', '哭', '退', '减', '重挫', '平仓', '破灭', '崩', '绿', '韭菜', '悲催', '崩溃', '下滑', '拖累', '弱']
+                '反弹', '反转', '突破', '牛', '牛市', '利好', '盈利', '新高', '反弹', '增', '爆发', '升', '笑', '胜利', '逆袭', '热', '惊喜', '回暖',
+                '回调', '强']
+negativeWord = ['向下', '下跌', '跌', '跌停', '低迷', '顶', '顶部', '空袭', '跳水', '减仓', '减持', '卖出', '卖', '空', '清仓', '暴跌', '亏', '阴跌',
+                '拖累', '利空',
+                '考验', '新低', '跌破', '熊', '熊市', '套', '回撤', '垃圾', '哭', '退', '减', '重挫', '平仓', '破灭', '崩', '绿', '韭菜', '悲催',
+                '崩溃', '下滑', '拖累', '弱']
 neutralWord = ['震荡', '休养', '休养生息', '谨慎', '观望', '平稳', '过渡', '盘整']
 
 ssl._create_default_https_context = ssl._create_unverified_context
 # import md5sign
 
-headers={'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36'}
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36'}
+
+
 def curlmd5(src):
     m = hashlib.md5(src.encode('UTF-8'))
     return m.hexdigest().upper()
@@ -96,7 +103,11 @@ def dash_index(request):
     dataMA10 = stock_his_data['ma10'].tolist()
     dataMA20 = stock_his_data['ma20'].tolist()
 
-    return render(request, 'base_dash.html', {'stock_his_data_dic': stock_his_data_dic, 'date': json.dumps(date), 'open': json.dumps(open), 'close': json.dumps(close), 'high': json.dumps(high), 'low': json.dumps(low), 'volume': json.dumps(volume), 'dataMA5': json.dumps(dataMA5), 'dataMA10': json.dumps(dataMA10), 'dataMA20': json.dumps(dataMA20), 'stock_name': json.dumps(stock_name)})
+    return render(request, 'base_dash.html',
+                  {'stock_his_data_dic': stock_his_data_dic, 'date': json.dumps(date), 'open': json.dumps(open),
+                   'close': json.dumps(close), 'high': json.dumps(high), 'low': json.dumps(low),
+                   'volume': json.dumps(volume), 'dataMA5': json.dumps(dataMA5), 'dataMA10': json.dumps(dataMA10),
+                   'dataMA20': json.dumps(dataMA20), 'stock_name': json.dumps(stock_name)})
 
 
 def home(request):
@@ -113,7 +124,10 @@ def home(request):
     dataMA10 = stock_his_data['ma10'].tolist()
     dataMA20 = stock_his_data['ma20'].tolist()
 
-    return render(request, 'home.html', {'date': json.dumps(date), 'open': json.dumps(open), 'close': json.dumps(close), 'high': json.dumps(high), 'low': json.dumps(low), 'volume': json.dumps(volume), 'dataMA5': json.dumps(dataMA5), 'dataMA10': json.dumps(dataMA10), 'dataMA20': json.dumps(dataMA20), 'stock_name': json.dumps(stock_name)})
+    return render(request, 'home.html', {'date': json.dumps(date), 'open': json.dumps(open), 'close': json.dumps(close),
+                                         'high': json.dumps(high), 'low': json.dumps(low), 'volume': json.dumps(volume),
+                                         'dataMA5': json.dumps(dataMA5), 'dataMA10': json.dumps(dataMA10),
+                                         'dataMA20': json.dumps(dataMA20), 'stock_name': json.dumps(stock_name)})
 
 
 def stockKLine(request):
@@ -135,13 +149,13 @@ def stockKLine(request):
     nb_dateCount = setDate()
     homedir = os.getcwd()
 
-    clf = joblib.load(homedir+'/StockVisualData/Clf.pkl')
-    vectorizer = joblib.load(homedir+'/StockVisualData/Vect')
-    transformer = joblib.load(homedir+'/StockVisualData/Tfidf')
+    clf = joblib.load(homedir + '/StockVisualData/Clf.pkl')
+    vectorizer = joblib.load(homedir + '/StockVisualData/Vect')
+    transformer = joblib.load(homedir + '/StockVisualData/Tfidf')
 
     for pageNum in range(1, 21):
         urlPage = 'http://guba.eastmoney.com/list,' + \
-            str(stocknum)+'_'+str(pageNum)+'.html'
+                  str(stocknum) + '_' + str(pageNum) + '.html'
         stockPageRequest = urllib.request.urlopen(urlPage)
         htmlTitleContent = str(stockPageRequest.read(), 'utf-8')
         titlePattern = re.compile(
@@ -154,13 +168,13 @@ def stockKLine(request):
                     segList = list(jieba.cut(gotTitle[i][1], cut_all=True))
                     for eachItem in segList:
                         if eachItem != ' ':
-                            if eachItem in positiveWord: # 这么粗暴 ？
+                            if eachItem in positiveWord:  # 这么粗暴 ？
                                 dateCount[j][2] += 1
                                 continue
-                            elif eachItem in negativeWord: # 负面
+                            elif eachItem in negativeWord:  # 负面
                                 dateCount[j][3] += 1
                                 continue
-                            elif eachItem in neutralWord: # 中性词
+                            elif eachItem in neutralWord:  # 中性词
                                 dateCount[j][4] += 1
             text_predict = []
             for j in range(len(nb_dateCount)):
@@ -182,7 +196,12 @@ def stockKLine(request):
                     elif predicted == '中立':
                         nb_dateCount[j][4] += 1
 
-    return render(request, 'Stockkline/stockKline.html', {'stock_name': json.dumps(stock_name), 'date': json.dumps(date), 'open': json.dumps(open), 'close': json.dumps(close), 'high': json.dumps(high), 'low': json.dumps(low), 'volume': json.dumps(volume), 'dataMA5': json.dumps(dataMA5), 'dataMA10': json.dumps(dataMA10), 'dataMA20': json.dumps(dataMA20), 'dateCount': json.dumps(dateCount), 'nb_dateCount': json.dumps(nb_dateCount)})
+    return render(request, 'Stockkline/stockKline.html',
+                  {'stock_name': json.dumps(stock_name), 'date': json.dumps(date), 'open': json.dumps(open),
+                   'close': json.dumps(close), 'high': json.dumps(high), 'low': json.dumps(low),
+                   'volume': json.dumps(volume), 'dataMA5': json.dumps(dataMA5), 'dataMA10': json.dumps(dataMA10),
+                   'dataMA20': json.dumps(dataMA20), 'dateCount': json.dumps(dateCount),
+                   'nb_dateCount': json.dumps(nb_dateCount)})
 
 
 def wordcloud(request):
@@ -196,54 +215,57 @@ def wordcloudResult(request):
 def dicopinion(request):
     return render(request, "dicopinion.html")
 
+
 # 替换开头的0
 def sub_zero(str_):
     if str_:
-        return re.sub('^0','',str_)
+        return re.sub('^0', '', str_)
     else:
         return str_
 
+
 # 爬东财股吧 获取情感
+# http://127.0.0.1:8000/dicopinionResult/?dicStockNum=300033
+
 def dicopinionResult(request):
     dicStockNum = request.GET['dicStockNum']
     dateCount = setDate()
     stock_name = get_stock_name(dicStockNum)
 
-    # 爬取10页
+    # 爬取10页 后续改为异步爬取
     for pageNum in range(1, 10):
+        print(f'page:{pageNum}')
         urlPage = 'http://guba.eastmoney.com/list,' + \
-            str(dicStockNum)+',f_'+str(pageNum)+'.html'
-        stockPageRequest = requests.get(urlPage,headers=headers)
+                  str(dicStockNum) + ',f_' + str(pageNum) + '.html'
+        stockPageRequest = requests.get(urlPage, headers=headers)
         htmlTitleContent = stockPageRequest.text
-        # titlePattern = re.compile(
-        #     '<span class="l3">(.*?)title="(.*?)"(.*?)<span class="l6">(\d\d)-(\d\d)</span>', re.S) # 标题后面那个是作者
-        # gotTitle = re.findall(titlePattern, htmlTitleContent)
-        # print(type(gotTitle))
-        resp = Selector(text=htmlTitleContent)
-        nodes = resp.xpath('//div[contains(@class,"articleh normal_post") or contains(@class,"articleh normal_post odd")]')
 
-        for index,item in enumerate(nodes):
-            view=item.xpath('./span[@class="l1 a1"]/text()').extract_first()
-            comment_count=item.xpath('./span[@class="l2 a2"]/text()').extract_first()
-            title=item.xpath('./span[@class="l3 a3"]/a/text()').extract_first()
-            author=item.xpath('./span[@class="l4 a4"]/a/text()').extract_first()
-            create_time=item.xpath('./span[@class="l5 a5"]/text()').extract_first()
+        resp = Selector(text=htmlTitleContent)
+        nodes = resp.xpath(
+            '//div[contains(@class,"articleh normal_post") or contains(@class,"articleh normal_post odd")]')
+
+        for index, item in enumerate(nodes):
+            view = item.xpath('./span[@class="l1 a1"]/text()').extract_first()
+            comment_count = item.xpath('./span[@class="l2 a2"]/text()').extract_first()
+            title = item.xpath('./span[@class="l3 a3"]/a/text()').extract_first()
+            author = item.xpath('./span[@class="l4 a4"]/a/text()').extract_first()
+            create_time = item.xpath('./span[@class="l5 a5"]/text()').extract_first()
             # 处理日期
-            date_pattern = re.search('(\d+)-(\d+)',create_time)
+            date_pattern = re.search('(\d+)-(\d+)', create_time)
 
             month = sub_zero(date_pattern.group(1))
 
             day = sub_zero(date_pattern.group(2))
 
-            for j in range(len(dateCount)): # 5天
+            for j in range(len(dateCount)):  # 5天
 
                 if int(month) == dateCount[j][0] and int(day) == dateCount[j][1]:
-                    dateCount[j][5] += 1 # 数组的最后一个数+1，计算出现了一次，今天的标题
-                    segList = list(jieba.cut(title, cut_all=True)) # 分词后保存
+                    dateCount[j][5] += 1  # 数组的最后一个数+1，计算出现了一次，今天的标题
+                    segList = list(jieba.cut(title, cut_all=True))  # 分词后保存
                     # print(tx_npl(gotTitle[i][1]))
                     for eachItem in segList:
                         if eachItem != ' ':
-                            if eachItem in positiveWord: # 粗暴 简单
+                            if eachItem in positiveWord:  # 粗暴 简单
                                 dateCount[j][2] += 1
                                 continue
                             elif eachItem in negativeWord:
@@ -252,7 +274,10 @@ def dicopinionResult(request):
                             elif eachItem in neutralWord:
                                 dateCount[j][4] += 1
 
+                # print(f'{month}月{day}日：条数{len(segList)}')
+
     # 最近5天的数据
+    print(dateCount)
     return render(request, 'dicopinionResult.html', {'stock_name': stock_name, 'dateCount': json.dumps(dateCount)})
 
 
@@ -260,30 +285,46 @@ def nbopinion(request):
     return render(request, "nbopinion.html")
 
 
+# 用贝叶斯计算结果
 def nbopinionResult(request):
     Nb_stock_number = request.GET['Nb_stock_number']
     dateCount = setDate()
     stock_name = get_stock_name(Nb_stock_number)
     homedir = os.getcwd()
 
-    clf = joblib.load(homedir+'/StockVisualData/Clf.pkl')
-    vectorizer = joblib.load(homedir+'/StockVisualData/Vect')
-    transformer = joblib.load(homedir+'/StockVisualData/Tfidf')
+    clf = joblib.load(homedir + '/StockVisualData/Clf.pkl')
+    vectorizer = joblib.load(homedir + '/StockVisualData/Vect')
+    transformer = joblib.load(homedir + '/StockVisualData/Tfidf')
 
-    for pageNum in range(1, 21):
+    for pageNum in range(1, 10):
+
         urlPage = 'http://guba.eastmoney.com/list,' + \
-            str(Nb_stock_number)+'_'+str(pageNum)+'.html'
-        stockPageRequest = urllib.request.urlopen(urlPage)
-        htmlTitleContent = str(stockPageRequest.read(), 'utf-8')
-        titlePattern = re.compile(
-            '<span class="l3">(.*?)title="(.*?)"(.*?)<span class="l6">(\d\d)-(\d\d)</span>', re.S)
-        gotTitle = re.findall(titlePattern, htmlTitleContent)
-        for i in range(len(gotTitle)):
+                  str(Nb_stock_number) + '_' + str(pageNum) + '.html'
+        stockPageRequest = requests.get(urlPage, headers=headers)
+        htmlTitleContent = stockPageRequest.text
+
+        resp = Selector(text=htmlTitleContent)
+        nodes = resp.xpath(
+            '//div[contains(@class,"articleh normal_post") or contains(@class,"articleh normal_post odd")]')
+
+        for index, item in enumerate(nodes):
+            view = item.xpath('./span[@class="l1 a1"]/text()').extract_first()
+            comment_count = item.xpath('./span[@class="l2 a2"]/text()').extract_first()
+            title = item.xpath('./span[@class="l3 a3"]/a/text()').extract_first()
+            author = item.xpath('./span[@class="l4 a4"]/a/text()').extract_first()
+            create_time = item.xpath('./span[@class="l5 a5"]/text()').extract_first()
+            # 处理日期
+            date_pattern = re.search('(\d+)-(\d+)', create_time)
+
+            month = sub_zero(date_pattern.group(1))
+
+            day = sub_zero(date_pattern.group(2))
+
             text_predict = []
             for j in range(len(dateCount)):
-                if int(gotTitle[i][3]) == dateCount[j][0] and int(gotTitle[i][4]) == dateCount[j][1]:
+                if int(month) == dateCount[j][0] and int(day) == dateCount[j][1]:
                     dateCount[j][5] += 1
-                    seg_list = list(jieba.cut(gotTitle[i][1], cut_all=True))
+                    seg_list = list(jieba.cut(title, cut_all=True))
                     seg_text = " ".join(seg_list)
                     text_predict.append(seg_text)
                     text_predict = np.array(text_predict)
@@ -298,13 +339,13 @@ def nbopinionResult(request):
                         continue
                     elif predicted == '中立':
                         dateCount[j][4] += 1
+                    # 没有返回分数
+
     return render(request, 'nbopinionResult.html', {'stock_name': stock_name, 'dateCount': json.dumps(dateCount)})
 
+
 # 设置时间数组
-
-
 def setDate():
-
     '''
     返回数据
     Out[13]:
@@ -324,24 +365,20 @@ def setDate():
     return dateCount
 
 
-
 # 获取股票名称
-
-
 def get_stock_name(stocknumber):
     realtimeData = ts.get_realtime_quotes(stocknumber)
     realtimeData = realtimeData.to_dict('record')
     stock_name = realtimeData[0]['name']
     return stock_name
 
+
 # 获取分词List
-
-
 def get_segList(stocknumber):
     segList = []
     for pageNum in range(1, 21):
         urlPage = 'http://guba.eastmoney.com/list,' + \
-            str(stocknumber) + '_' + str(pageNum) + '.html'
+                  str(stocknumber) + '_' + str(pageNum) + '.html'
         stockPageRequest = urllib.request.urlopen(urlPage)
         htmlTitleContent = str(stockPageRequest.read(), 'utf-8')
         titlePattern = re.compile(
@@ -354,29 +391,48 @@ def get_segList(stocknumber):
                     segList.append(segSentence)
     return segList
 
+
 # 分类器构建和数据持久化
-
-
+# 创建模型
 def NB_create_model():
     # 获取标题文本
     text_list = []
-    for page_num in range(0, 5):
+
+    for page_num in range(0, 50):
         # 页数可改
         url = 'http://guba.eastmoney.com/list,gssz,f_' + \
-            str(page_num) + '.html'
-        request = urllib.request.urlopen(url)
-        content = str(request.read(), 'utf-8')
-        pattern = re.compile(
-            '<span class="l3">(.*?)title="(.*?)"(.*?)<span class="l6">(\d\d)-(\d\d)</span>', re.S)
-        itemstemp = re.findall(pattern, content)
-        for i in range(0, len(itemstemp)):
-            seg_list = list(jieba.cut(itemstemp[i][1], cut_all=False))
+              str(page_num) + '.html'
+        stockPageRequest = requests.get(url, headers=headers)
+        htmlTitleContent = stockPageRequest.text
+
+        resp = Selector(text=htmlTitleContent)
+        nodes = resp.xpath(
+            '//div[contains(@class,"articleh normal_post") or contains(@class,"articleh normal_post odd")]')
+
+        # itemstemp = re.findall(pattern, content)
+        for index, item in enumerate(nodes):
+
+            view = item.xpath('./span[@class="l1 a1"]/text()').extract_first()
+            comment_count = item.xpath('./span[@class="l2 a2"]/text()').extract_first()
+            title = item.xpath('./span[@class="l3 a3"]/a/text()').extract_first()
+            author = item.xpath('./span[@class="l4 a4"]/a/text()').extract_first()
+            create_time = item.xpath('./span[@class="l5 a5"]/text()').extract_first()
+            # 处理日期
+            date_pattern = re.search('(\d+)-(\d+)', create_time)
+
+            month = sub_zero(date_pattern.group(1))
+
+            day = sub_zero(date_pattern.group(2))
+
+            seg_list = list(jieba.cut(title, cut_all=False))
             seg_str = " ".join(seg_list)
             text_list.append(seg_str)
-    text_list = np.array(text_list)
+
+    text_list = np.array(text_list)  # 文本list
 
     # 标注文本特征
-    class_vec = [' ']*len(text_list)
+    class_vec = [' '] * len(text_list)  # 一样长的list
+
     for i in range(0, len(text_list)):
         for pos in positiveWord:
             if pos in text_list[i]:
@@ -390,6 +446,7 @@ def NB_create_model():
         if class_vec[i] == ' ':
             class_vec[i] = '无立场'
 
+        print(class_vec[i])
     # 将文本中的词语转换为词频矩阵，矩阵元素a[i][j] 表示j词在i类文本下的词频
     vectorizer = CountVectorizer()
     # 该类会统计每个词语的tf-idf权值
@@ -402,6 +459,9 @@ def NB_create_model():
     clf.fit(tfidf, class_vec)
 
     # 持久化保存
-    joblib.dump(clf, 'Clf.pkl')
-    joblib.dump(vectorizer, 'Vect')
-    joblib.dump(transformer, 'Tf-Idf')
+    joblib.dump(clf, 'Clf_v1.pkl')
+    joblib.dump(vectorizer, 'Vect_v1')
+    joblib.dump(transformer, 'Tf-Idf_v1')
+
+if __name__=='__main__':
+    NB_create_model()

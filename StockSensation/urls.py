@@ -34,7 +34,7 @@ urlpatterns = [
        url(r'^wordcloud/$', StockVisualData_views.wordcloud, name='wordcloud'),
        url(r'^wordcloudResult/$', StockVisualData_views.wordcloudResult, name='wordcloudResult'),
        
-       url(r'^dicopinion/$', StockVisualData_views.dicopinion, name='dicopinion'),
+       url(r'^dicopinion/$', StockVisualData_views.dicopinion, name='dicopinion'), # 默认主页，下面的是查询
        url(r'^dicopinionResult/$', StockVisualData_views.dicopinionResult, name='dicopinionResult'),
        
        url(r'^nbopinion/$', StockVisualData_views.nbopinion, name='nbopinion'),
